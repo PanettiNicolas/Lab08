@@ -1,4 +1,5 @@
 from database.impianto_DAO import ImpiantoDAO
+from database.consumo_DAO import ConsumoDAO
 
 '''
     MODELLO:
@@ -17,7 +18,7 @@ class Model:
 
     def load_impianti(self):
         """ Carica tutti gli impianti e li setta nella variabile self._impianti """
-        self._impianti = ImpiantoDAO.get_impianti()
+        self._impianti = ImpiantoDAO.get_impianti()          #Lista contenente (id, nome_impianto, indirizzo)
 
     def get_consumo_medio(self, mese:int):
         """
@@ -26,6 +27,23 @@ class Model:
         :return: lista di tuple --> (nome dell'impianto, media), es. (Impianto A, 123)
         """
         # TODO
+        lista_consumo_medio = []
+
+        for impianto in self._impianti:
+            consumi_mensili = ConsumoDAO.get_consumi(impianto.id)
+            somma_consumi = 0
+            conta_giorni_mese = 0
+
+            for consumo in consumi_mensili:
+                if consumo.data.month == mese:
+                    somma_consumi = somma_consumi + consumo.kwh
+                    conta_giorni_mese = conta_giorni_mese + 1
+
+            media_consumi = somma_consumi / conta_giorni_mese
+
+            lista_consumo_medio.append((impianto.nome, media_consumi))
+
+        return lista_consumo_medio
 
     def get_sequenza_ottima(self, mese:int):
         """
@@ -47,6 +65,7 @@ class Model:
     def __ricorsione(self, sequenza_parziale, giorno, ultimo_impianto, costo_corrente, consumi_settimana):
         """ Implementa la ricorsione """
         # TODO
+
 
     def __get_consumi_prima_settimana_mese(self, mese: int):
         """
