@@ -41,7 +41,9 @@ class Model:
 
             media_consumi = somma_consumi / conta_giorni_mese
 
-            lista_consumo_medio.append((impianto.nome, media_consumi))
+            media_consumi_arrotondata = round(media_consumi, 2)
+
+            lista_consumo_medio.append((impianto.nome, media_consumi_arrotondata))
 
         return lista_consumo_medio
 
@@ -67,10 +69,24 @@ class Model:
         # TODO
 
 
+
     def __get_consumi_prima_settimana_mese(self, mese: int):
         """
         Restituisce i consumi dei primi 7 giorni del mese selezionato per ciascun impianto.
         :return: un dizionario: {id_impianto: [kwh_giorno1, ..., kwh_giorno7]}
         """
         # TODO
+        consumi_impianti = {}
 
+        for impianto in self._impianti:
+            consumi_totali = ConsumoDAO.get_consumi(impianto.id)
+            consumi_prima_settimana = []
+
+            for consumi in consumi_totali:
+                if consumi.data.month == mese:
+                    if consumi.data.day <= 7:
+                        consumi_prima_settimana.append(consumi.kwh)
+
+            consumi_impianti[impianto.id] = consumi_prima_settimana
+
+        return consumi_impianti
