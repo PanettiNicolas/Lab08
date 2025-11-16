@@ -68,6 +68,35 @@ class Model:
         """ Implementa la ricorsione """
         # TODO
 
+        if giorno == 8:                                   #Break condition
+            self.__costo_ottimo = costo_corrente
+            self.__sequenza_ottima = sequenza_parziale
+
+        else:
+            impianto1 = self._impianti[0].id
+            impianto2 = self._impianti[1].id
+
+            consumo_impianto1 = consumi_settimana[impianto1][giorno-1]
+            consumo_impianto2 = consumi_settimana[impianto2][giorno-1]
+
+            if consumo_impianto1 < consumo_impianto2:
+                costo_corrente += consumo_impianto1
+                nuovo_impianto = impianto1
+
+            else:
+                costo_corrente += consumo_impianto2
+                nuovo_impianto = impianto2
+
+            if ultimo_impianto is not None and ultimo_impianto != nuovo_impianto:
+                costo_corrente += 5
+                ultimo_impianto = nuovo_impianto
+            else:
+                ultimo_impianto = nuovo_impianto
+
+            sequenza_parziale.append(ultimo_impianto)
+            giorno += 1
+
+            self.__ricorsione(sequenza_parziale, giorno, ultimo_impianto, costo_corrente, consumi_settimana)
 
 
     def __get_consumi_prima_settimana_mese(self, mese: int):
